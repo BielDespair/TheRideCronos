@@ -1,3 +1,5 @@
+#TODO this class should be removed and replaced by models/event entirely
+#We should remove the eventObj from the event_card, and when enter_event() is called, the EventModel obj should be loaded by getting info from the database.
 class Event():
     def __init__(self, id, api_token, name, date, icon_path, path=None):
         self.id = id

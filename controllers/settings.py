@@ -7,4 +7,8 @@ class SettingsController:
         
     def get_url(self):
         return self.model.url
+    def set_url(self):
+        pass
+    def set_local(self, value):
+        pass
         

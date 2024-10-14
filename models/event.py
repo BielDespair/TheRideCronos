@@ -1,7 +1,10 @@
 import pandas as pd
+from models.api import API
 from models.event_class import Event
 class EventModel():
     def __init__(self, event: Event):
+        self.api = API()
+        
         self.id = event.id
         self.api_token = event.api_token
         self.name = event.name
@@ -69,3 +72,5 @@ class EventModel():
     def set_start_type(self, start_type):
         self.start_type = start_type
         #TODO: save in database
+        
+    
