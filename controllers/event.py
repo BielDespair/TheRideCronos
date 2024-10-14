@@ -14,7 +14,7 @@ class EventController:
                 row.visible = True
             else:
                 row.visible = False
-        self.view.dt.update()
+        self.view.register.dt.update()
     def get_columns(self):
         return self.model.get_columns()
     def get_rows(self):
@@ -34,8 +34,13 @@ class EventController:
         return self.model.get_start_types()
     def get_event_start(self):
         return self.model.get_event_start()
+    def get_sheet_name(self):
+        return self.model.get_sheet_name()
     
     def change_event_type(self, value):
         self.model.change_event_type(value)
     def change_start_type(self, value):
         self.model.change_start_type(value)
+
+    def sheet_is_present(self):
+        return self.model.sheet_is_present()

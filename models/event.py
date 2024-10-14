@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 from models.api import API
 from models.event_class import Event
 class EventModel():
@@ -54,7 +55,7 @@ class EventModel():
     def get_rows(self):
         if self.df:
             return self.df.to_dict('records')
-        return [[1,2,3,4,5,6,7] for _ in range(100)]
+        return [[1,2,3,4,5,6,7] for _ in range(1)]
     
     def get_event_types(self):
         return self.event_types
@@ -65,6 +66,10 @@ class EventModel():
         return self.event_type if self.event_type else ""
     def get_event_start(self):
         return self.start_type if self.start_type else ""
+    def get_sheet_name(self):
+        if not self.sheet_path:
+            return ""
+        return os.path.basename(self.sheet_path)
     
     def set_event_type(self, event_type):
         self.event_type = event_type
@@ -72,5 +77,11 @@ class EventModel():
     def set_start_type(self, start_type):
         self.start_type = start_type
         #TODO: save in database
+    def sheet_is_present(self):
+        if not self.sheet_path:
+            return False
+        if os.path.exists(self.sheet_path):
+            return True
+        return False
         
     

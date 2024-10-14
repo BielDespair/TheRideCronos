@@ -10,6 +10,6 @@ class StartConfig(ft.Container):
         
         #Layout
         
-        
+
         
         self.content = ft.Column(controls=[])
