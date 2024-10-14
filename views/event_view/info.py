@@ -19,9 +19,9 @@ class InfoView(ft.Container):
         
         #Buttons
         type_options = [ft.dropdown.Option(option) for option in self.controller.get_event_types()]
-        bt_event_type = ft.Dropdown(options=type_options, value="Tipo de Prova", on_change=lambda e: self.controller.change_event_type(e.control.value))
+        bt_event_type = ft.Dropdown(options=type_options, value=self.controller.get_event_type(), on_change=lambda e: self.controller.change_event_type(e.control.value))
         start_options = [ft.dropdown.Option(option) for option in self.controller.get_start_types()]
-        bt_start_type = ft.Dropdown(options=start_options, value="Start", on_change=lambda e: self.controller.change_start(e.control.value))
+        bt_start_type = ft.Dropdown(options=start_options, value=self.controller.get_event_start(), on_change=lambda e: self.controller.change_start_type(e.control.value))
         
         #Components
         type_select = ft.Container(ft.Column(controls=[event_type, bt_event_type], horizontal_alignment=ft.CrossAxisAlignment.CENTER),bgcolor=ft.colors.RED_200)
@@ -31,6 +31,3 @@ class InfoView(ft.Container):
         row2 = ft.Row(controls=[type_select, start_select], alignment=ft.MainAxisAlignment.SPACE_AROUND)
         
         self.content = ft.Column(controls=[row1, row2], scroll=ft.ScrollMode.ALWAYS, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
-
-            
-            

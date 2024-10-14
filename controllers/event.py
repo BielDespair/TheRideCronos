@@ -1,13 +1,10 @@
 from models.event import EventModel
 
 class EventController:
-    def __init__(self, page, view):
+    def __init__(self, page, event, view):
         self.page = page
-        self.model = EventModel()
+        self.model = EventModel(event)
         self.view = view
-        
-        
-        
         
     def search(self, value):
         value = value.lower()
@@ -31,12 +28,14 @@ class EventController:
     
     def get_event_types(self):
         return self.model.get_event_types()
+    def get_event_type(self):
+        return self.model.get_event_type()
     def get_start_types(self):
         return self.model.get_start_types()
+    def get_event_start(self):
+        return self.model.get_event_start()
     
     def change_event_type(self, value):
-        
-        self.view.update()
+        self.model.change_event_type(value)
     def change_start_type(self, value):
-        
-        self.view.update()
+        self.model.change_start_type(value)

@@ -9,7 +9,7 @@ class EventView(ft.Container):
     def __init__(self, page, event):
         super().__init__()
         self.page = page
-        self.controller = EventController(page, self)
+        self.controller = EventController(page, event, self)
         
         #Atributes
         self.event = event
@@ -28,5 +28,5 @@ class EventView(ft.Container):
                 ft.Tab(text="Participantes", content=self.register),
                 ],
         )
-
+        
         self.content = self.tabs

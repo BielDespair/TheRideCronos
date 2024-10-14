@@ -1,11 +1,20 @@
 import pandas as pd
+from models.event_class import Event
 class EventModel():
-    def __init__(self):
+    def __init__(self, event: Event):
+        self.id = event.id
+        self.api_token = event.api_token
+        self.name = event.name
+        self.date = event.date
+        self.icon_path = event.icon_path
+        
         self.sheet_path = None
         self.sheet_format = '.xlsx'
         self.df = None
         self.columns = []
         self.search_key = 0
+        self.event_type = None
+        self.start_type = None
         
         #Atributos da Prova
         self.teams = 0
@@ -32,7 +41,6 @@ class EventModel():
         else:
             data = pd.read_csv(self.sheet_path)
         
-        
     def next_register(self):
         pass
     
@@ -49,3 +57,15 @@ class EventModel():
         return self.event_types
     def get_start_types(self):
         return self.start_types
+    
+    def get_event_type(self):
+        return self.event_type if self.event_type else ""
+    def get_event_start(self):
+        return self.start_type if self.start_type else ""
+    
+    def set_event_type(self, event_type):
+        self.event_type = event_type
+        #TODO: save in database
+    def set_start_type(self, start_type):
+        self.start_type = start_type
+        #TODO: save in database

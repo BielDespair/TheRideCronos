@@ -9,5 +9,9 @@ class Event():
         else:
             self.icon_path = icon_path
         self.path = path
+        
+        self.sheet_path = None
+        self.sheet_format = '.xlsx'
+
     def set_path(self, path):
         self.path = path
