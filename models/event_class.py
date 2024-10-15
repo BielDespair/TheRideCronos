@@ -1,5 +1,11 @@
-#TODO this class should be removed and replaced by models/event entirely
+#TODO this class should be removed and replaced by models/event entirely (maybe)
 #We should remove the eventObj from the event_card, and when enter_event() is called, the EventModel obj should be loaded by getting info from the database.
+#TODO If this is not  removed, this class is incomplete. Upon loading from the path, it should load the not db file (.ini, .json, something)
+#TODO i think a database is overkill at this point. We should use a .csv/.xlsx, because we can them export readings and print on paper. the only reason
+# a database is being used is for data integrity
+
+
+#THIS CLASS IS USELESS
 class Event():
     def __init__(self, id, api_token, name, date, icon_path, path=None):
         self.id = id

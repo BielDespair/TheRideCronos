@@ -22,7 +22,6 @@ class MainModel:
         #This should all be in the model
         for path in event_paths:
             query = self.db.query_event(path)
-            print("QUery: ", query)
             new_event = Event(query[1], query[2], query[3], query[4], query[5], path=path)
             events.append(new_event)
         return events

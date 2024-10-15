@@ -76,6 +76,5 @@ writer = Writer()
 writer.find_com_port()
 writer.connect_to_serial()
 print(writer.get_current_epc())
-
-        '''
+'''
     

@@ -1,4 +1,5 @@
 import os
+import re
 
 def get_valid_event_path(path, name):
     final_path = path+name+".db"
@@ -16,3 +17,13 @@ def get_events_paths(path):
         if file.endswith(".db"):
             events.append(path+file)
     return events
+
+def format_date_of_birth(date):
+    date = re.sub(r'\D', '', data)
+    if len(data) > 8:
+        data = data[:8]
+    if len(data) > 2:
+        data = data[:2] + '/' + data[2:]
+    if len(data) > 5:
+        data = data[:5] + '/' + data[5:9]
+    return date

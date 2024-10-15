@@ -10,6 +10,8 @@ class AppLayout(ft.Row):
         self.page = page
         #Theme
         self.page.theme_mode = ft.ThemeMode.DARK
+        self.page.window_min_width = 1366
+        self.page.window_min_height = 768
         
         #Layout properties
         self.expand = True

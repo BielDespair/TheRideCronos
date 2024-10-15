@@ -25,3 +25,5 @@ class NavController:
         self.app.controls[-1] = self.active_view
         self.page.sidebar.selected_index = None
         self.page.update()
+        self.active_view.controller.initialize()
+        

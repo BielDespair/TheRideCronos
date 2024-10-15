@@ -1,4 +1,6 @@
 import flet as ft
+
+from views.event_view.components.sheet_import_picker import SheetImportPicker
 class InfoView(ft.Container):
     def __init__(self, page, controller, event):
         super().__init__()
@@ -10,6 +12,13 @@ class InfoView(ft.Container):
         #Layout
         self.text_size = 18
         self.margin = 5
+        
+        #Dialog
+        self.sheet_import_dialog = SheetImportPicker(self.controller)
+        if self.page.overlay:
+            self.page.overlay[0] = self.sheet_import_dialog
+        else:
+            self.page.overlay.append(self.sheet_import_dialog)
         #Texts
         name = ft.Text(self.event.name, size=20, text_align=ft.TextAlign.CENTER)
         sheet_error = ft.Text("Nenhuma planilha carregada", size=18, color="red", text_align=ft.TextAlign.CENTER, visible=False)
@@ -19,9 +28,9 @@ class InfoView(ft.Container):
         start_type = ft.Text("Tipo de Largada", size=self.text_size)
         
         #Buttons
-        bt_import_sheet = ft.ElevatedButton(text="Importar Planilha", icon=ft.icons.UPLOAD_FILE, on_click=lambda e: self.controller.import_sheet())
+        bt_import_sheet = ft.ElevatedButton(text="Importar Planilha", icon=ft.icons.UPLOAD_FILE, on_click=lambda e: self.controller.import_sheet_dialog())
         type_options = [ft.dropdown.Option(option) for option in self.controller.get_event_types()]
-        bt_event_type = ft.Dropdown(options=type_options, value=self.controller.get_event_type(), on_change=lambda e: self.controller.change_event_type(e.control.value))
+        bt_event_type = ft.Dropdown(options=type_options, value=self.controller.get_event_types(), on_change=lambda e: self.controller.change_event_type(e.control.value))
         start_options = [ft.dropdown.Option(option) for option in self.controller.get_start_types()]
         bt_start_type = ft.Dropdown(options=start_options, value=self.controller.get_event_start(), on_change=lambda e: self.controller.change_start_type(e.control.value))
         

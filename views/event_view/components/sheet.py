@@ -12,11 +12,12 @@ class Sheet(ft.UserControl):
         
         #Layout
     def build(self):
-        return ft.DataTable(
+        self.sheet = ft.DataTable(
             columns=self.columns,
             rows=self.rows,
-            bgcolor=ft.colors.BLACK
-            )        
+            bgcolor=ft.colors.BLACK,
+            )
+        return self.sheet
     def fetch_columns(self):
         columns = []
         for column in self.controller.get_columns():
