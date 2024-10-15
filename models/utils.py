@@ -27,3 +27,8 @@ def format_date_of_birth(date):
     if len(data) > 5:
         data = data[:5] + '/' + data[5:9]
     return date
+def treat_plate_num(data):
+    data = str(data)
+    if '-' not in data:
+        return data + '-0'
+    return data

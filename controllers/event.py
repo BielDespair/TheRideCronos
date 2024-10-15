@@ -52,6 +52,7 @@ class EventController:
     def get_sheet_name(self):
         return self.model.get_sheet_name()
     def set_event_sheet(self, e):
+
         files = e.files
         if files:
             self.model.set_event_sheet(files[0].path)

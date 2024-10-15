@@ -3,6 +3,7 @@ import os
 from models.api import API
 from models.database import Database
 from models.event_class import Event
+from models.utils import treat_plate_num
 class EventModel():
     def __init__(self, event: Event):
         self.api = API()
@@ -57,6 +58,7 @@ class EventModel():
             self.df = pd.read_excel(self.sheet)
         else:
             self.df = pd.read_csv(self.sheet)
+        self.df['Numero Placa'] = self.df['Numero Placa'].apply(treat_plate_num)
         self.df['registered'] = False
         self.sort_df()
         
