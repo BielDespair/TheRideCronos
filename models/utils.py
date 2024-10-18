@@ -1,5 +1,8 @@
 import os
+import shutil
 import re
+
+
 
 def get_valid_event_path(path, name):
     final_path = path+name+".db"
@@ -27,8 +30,31 @@ def format_date_of_birth(date):
     if len(data) > 5:
         data = data[:5] + '/' + data[5:9]
     return date
+
 def treat_plate_num(data):
-    data = str(data)
     if '-' not in data:
         return data + '-0'
     return data
+
+
+def clean_df(dataframe):
+    if 'registered' in dataframe.columns: #Já foi tratado
+        return
+    dataframe['Numero Placa'] = dataframe['Numero Placa'].astype(str) #Transforms all Plate Num  into string
+    dataframe['Numero Placa'] = dataframe['Numero Placa'].apply(treat_plate_num) #Adds a '-0' if it doenst have a hifen.
+    dataframe['registered'] = False #TODO maybe the loaded sheet will already be treated and sorted...
+    return dataframe
+    
+def sort_df(dataframe):
+    dataframe[['num_part', 'suffix']] = dataframe['Numero Placa'].str.split('-', expand=True)
+    dataframe['num_part'] = dataframe['num_part'].astype(int)
+    dataframe['suffix'] = dataframe['suffix'].astype(int)
+    dataframe = dataframe.sort_values(by=['num_part', 'suffix']).reset_index(drop=True)
+    dataframe['Numero Placa'] = dataframe['num_part'].astype(str) + '-' + dataframe['suffix'].astype(str) 
+    dataframe['Numero Placa'] = dataframe['Numero Placa'].str.replace(r'-0$', '', regex=True)
+    dataframe['Numero Placa'] = dataframe['Numero Placa'].str.zfill(3)  # Ensure 3 digits by padding
+    dataframe = dataframe.drop(columns=['num_part', 'suffix'])
+    return dataframe
+
+def import_sheet(source, destination):
+    shutil.copy(source, destination)

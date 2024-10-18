@@ -7,7 +7,6 @@ class NavController:
         self.page = page
         self.app = app
         
-        
         self.home_view = HomeView(page)
         self.settings_view = SettingsView(page)
         self.views = [self.home_view, self.settings_view]

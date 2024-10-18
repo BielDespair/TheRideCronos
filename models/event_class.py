@@ -7,7 +7,7 @@
 
 #THIS CLASS IS USELESS
 class Event():
-    def __init__(self, id, api_token, name, date, icon_path, path=None):
+    def __init__(self, id, api_token, name, date, icon_path, sheet_path, event_path=None):
         self.id = id
         self.api_token = api_token
         self.name = name
@@ -16,9 +16,9 @@ class Event():
             self.icon_path = "assets/images/default_event_bg.jpg"
         else:
             self.icon_path = icon_path
-        self.path = path
+        self.event_path = event_path
         
-        self.sheet_path = None
+        self.sheet_path = sheet_path
         self.sheet_format = '.xlsx'
 
     def set_path(self, path):

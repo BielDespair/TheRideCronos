@@ -37,6 +37,8 @@ class EventCard(ft.UserControl):
                 ],
             actions_alignment=ft.MainAxisAlignment.END
         )
+        
+        
     def build(self):        
         return ft.Container(
             content=ft.Column(
@@ -50,8 +52,7 @@ class EventCard(ft.UserControl):
                 width=400,
                 height=200,
                 border_radius=ft.border_radius.all(5),
-                image_src=self.icon,
-                image_fit=ft.ImageFit.COVER,
+                image=ft.DecorationImage(src=self.icon, fit=ft.ImageFit.COVER),
                 ink=True,
                 margin=ft.margin.all(10),
                 

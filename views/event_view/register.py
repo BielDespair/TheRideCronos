@@ -22,21 +22,21 @@ class RegisterView(ft.Container):
         #Texts
         text1 = ft.Text("Participantes Cadastrados", size=20, text_align=ft.TextAlign.CENTER)
         text2 = ft.Text("Cadastro dos Participantes", size=20, text_align=ft.TextAlign.CENTER)
-        
         self.sheet_text = ft.Text(text_align=ft.TextAlign.CENTER)
- 
         self.registration_text = ft.Text(value="", visible=False)
+        self.error_text = ft.Text(value="", visible=False)
         
         #Buttons
         search_bar_text = ft.TextField(label="Pesquisar", on_change=lambda e: self.controller.search(e.control.value), width=200)
         register_search_bar = ft.TextField(label="Pesquisar", on_change=lambda e: self.controller.register_search(e.control.value), width=200)
+        auto_advance = ft.Row([ft.Switch(label="Auto Avançar", on_change= lambda e: self.controller.toggle_auto_advance(e.control.value))], alignment=ft.MainAxisAlignment.CENTER)
         
         insert_register = ft.OutlinedButton("Inseririr Participante", on_click=lambda e: self.controller.insert_register_dialog())
 
-        prev_athlete = ft.OutlinedButton("Anterior", on_click=lambda e: self.controller.prev_athlete())
+        prev_athlete = ft.OutlinedButton("Anterior", on_click=lambda e: self.controller.get_prev_athlete())
         skip_athlete = ft.OutlinedButton("Pular", on_click=lambda e: self.controller.skip_athlete())
-        next_athlete = ft.OutlinedButton("Proximo", on_click=lambda e: self.controller.next_athlete())
-        register = ft.OutlinedButton("Cadastrar Tag", on_click=lambda e: self.controller.register())
+        next_athlete = ft.OutlinedButton("Proximo", on_click=lambda e: self.controller.get_next_athlete())
+        register = ft.Row([ft.OutlinedButton("Cadastrar Tag", on_click=lambda e: self.controller.register_tag()), auto_advance], alignment=ft.MainAxisAlignment.CENTER)
 
         #Components
         registers_header = ft.Row([search_bar_text, insert_register])
@@ -47,7 +47,7 @@ class RegisterView(ft.Container):
 
         divider = ft.VerticalDivider(width=5)
         #Controls
-        left_container = ft.Column([text2, self.sheet_text, self.athlete_register_info, registration_row, register, self.registration_text], expand=True, alignment=ft.MainAxisAlignment.START, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+        left_container = ft.Column([text2, self.sheet_text, self.athlete_register_info, self.error_text, registration_row, register, self.registration_text], expand=True, alignment=ft.MainAxisAlignment.START, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         register_container = ft.Row(controls=[left_container, divider, scroll_table, ], expand=True, alignment=ft.MainAxisAlignment.CENTER)
         
         
@@ -63,10 +63,6 @@ class RegisterView(ft.Container):
             self.sheet_text.value = "Nenhuma planilha encontrada"
             self.sheet_text.color = "red"
         self.update()
-    def get_next_athlete(self):
-        athlete = self.controller.get_next_athlete()
-        print(athlete)
-        
                 
     def fetch_columns(self):
         columns = []
@@ -85,3 +81,9 @@ class RegisterView(ft.Container):
         for data in row:
             cells.append(ft.DataCell(ft.Text(data), data=str(data)))
         return cells
+    
+    def update_athlete(self, athlete):
+        self.athlete_register_info.update_row(athlete)
+    
+    def show_registration_done(self):
+        ...

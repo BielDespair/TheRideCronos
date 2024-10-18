@@ -22,18 +22,21 @@ class MainModel:
         #This should all be in the model
         for path in event_paths:
             query = self.db.query_event(path)
-            new_event = Event(query[1], query[2], query[3], query[4], query[5], path=path)
+            new_event = Event(id=query['api_id'], api_token=query['api_token'], name=query['name'], date=query['date'], icon_path=query['icon_path'],  sheet_path=query['sheet_path'], event_path=query['path'])
             events.append(new_event)
         return events
     
-    def create_new_event(self, name, date, icon_path):
-        response = self.api.create_event(name)
-        data, error = response[0], response[1]
-        if error:
-            return data, False
-        id = data['id']
-        api_token = data['api_token']
-        
+    def create_new_event(self, name, date, icon_path, offline):
+        if not offline:
+            response = self.api.create_event(name)
+            data, error = response[0], response[1]
+            if error:
+                return data, False
+            id = data['id']
+            api_token = data['api_token']
+        else:
+            id = name
+            api_token = ""
         event = Event(id, api_token, name, date, icon_path)        
         self.db.new_event(event)
         

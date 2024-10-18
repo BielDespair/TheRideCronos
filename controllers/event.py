@@ -5,6 +5,8 @@ class EventController:
         self.page = page
         self.model = EventModel(event)
         self.view = view
+        
+        self.auto_advance = False
     
     def search(self, value):
         value = value.lower()
@@ -23,7 +25,9 @@ class EventController:
         #TODO Insert to the "sheet" and set current index of tag reg to this one.
         pass
     def register_tag(self):
-        pass
+        registered = self.model.register_tag()
+        if self.auto_advance:
+            self.get_next_athlete()
         
     def search_sheet(self, value):
         #open dialog
@@ -34,7 +38,9 @@ class EventController:
         rows = self.model.get_rows()
         return rows
     def get_next_athlete(self):
-        return self.model.get_next_athlete()
+        self.view.register.update_athlete(self.model.get_next_athlete())
+    def get_prev_athlete(self):
+        self.view.register.update_athlete(self.model.get_prev_athlete())
     
     def edit_register(self):
         pass
@@ -52,7 +58,6 @@ class EventController:
     def get_sheet_name(self):
         return self.model.get_sheet_name()
     def set_event_sheet(self, e):
-
         files = e.files
         if files:
             self.model.set_event_sheet(files[0].path)
@@ -82,6 +87,9 @@ class EventController:
             pass
         else:
             #load df and get first athlete, if resumed show registered athletes
-            self.view.register.get_next_athlete()
+            self.get_next_athlete()
             self.view.register.fetch_rows()
             self.view.register.dt.update()
+            
+    def toggle_auto_advance(self, value):
+        self.auto_advance = value

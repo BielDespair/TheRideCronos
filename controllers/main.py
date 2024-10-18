@@ -8,12 +8,12 @@ class MainController:
         self.model = MainModel()
         self.view = view
     
-    def add_event(self, name, date, icon_path=None):
+    def add_event(self, name, date, offline, icon_path=None):
         self.active_dialog.disabled = True
         self.active_dialog.toggle_waiting()
         
         time.sleep(0.5)
-        data, response = self.model.create_new_event(name, date, icon_path)
+        data, response = self.model.create_new_event(name, date, icon_path, offline)
         #Falha na API
         if not response:
             self.active_dialog.disabled = False
