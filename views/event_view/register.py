@@ -34,7 +34,6 @@ class RegisterView(ft.Container):
         insert_register = ft.OutlinedButton("Inseririr Participante", on_click=lambda e: self.controller.insert_register_dialog())
 
         prev_athlete = ft.OutlinedButton("Anterior", on_click=lambda e: self.controller.get_prev_athlete())
-        skip_athlete = ft.OutlinedButton("Pular", on_click=lambda e: self.controller.skip_athlete())
         next_athlete = ft.OutlinedButton("Proximo", on_click=lambda e: self.controller.get_next_athlete())
         register = ft.Row([ft.OutlinedButton("Cadastrar Tag", on_click=lambda e: self.controller.register_tag()), auto_advance], alignment=ft.MainAxisAlignment.CENTER)
 
@@ -43,7 +42,7 @@ class RegisterView(ft.Container):
         self.scroll_column = ft.Column([self.dt], scroll=ft.ScrollMode.ALWAYS, expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         scroll_table = ft.Container(ft.Column([text1, registers_header, self.scroll_column], horizontal_alignment=ft.CrossAxisAlignment.CENTER), margin=5)
         self.athlete_register_info = RegistrationInfo(self.controller, self.event)
-        registration_row = ft.Row([prev_athlete, skip_athlete, next_athlete], alignment=ft.MainAxisAlignment.CENTER)
+        registration_row = ft.Row([prev_athlete, next_athlete], alignment=ft.MainAxisAlignment.CENTER)
 
         divider = ft.VerticalDivider(width=5)
         #Controls
@@ -72,9 +71,10 @@ class RegisterView(ft.Container):
 
     def fetch_rows(self):
         rows = []
-        for row in self.controller.get_rows():
+        for row in self.controller.get_registered_rows():
             rows.append(ft.DataRow(cells=self.fetch_cells(row)))
-        return rows
+        self.dt.rows = rows
+        self.dt.update()
     
     def fetch_cells(self, row):
         cells = []
@@ -87,3 +87,15 @@ class RegisterView(ft.Container):
     
     def show_registration_done(self):
         ...
+    def show_register_text(self, error, text=""):
+        if error:
+            color = ft.colors.RED
+        else:
+            color = ft.colors.GREEN
+            text = "Sucesso"
+        self.registration_text.color = color
+        self.registration_text.value = text
+        self.registration_text.visible = True
+        self.update()
+    def dissmiss_register_text(self):
+        self.registration_text.value = ""

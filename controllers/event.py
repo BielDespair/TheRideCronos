@@ -1,3 +1,8 @@
+import time
+import threading
+import requests
+
+
 from models.event import EventModel
 
 class EventController:
@@ -7,6 +12,7 @@ class EventController:
         self.view = view
         
         self.auto_advance = False
+        self.started = False
     
     def search(self, value):
         value = value.lower()
@@ -25,17 +31,29 @@ class EventController:
         #TODO Insert to the "sheet" and set current index of tag reg to this one.
         pass
     def register_tag(self):
-        registered = self.model.register_tag()
+        error, result = self.model.register_tag()
+        self.view.register.show_register_text(error, result)
+        if error: return
+        
+        self.view.register.fetch_rows()
         if self.auto_advance:
             self.get_next_athlete()
-        
+
+    def dismiss_message(self, delay):
+        time.sleep(delay)
+        self.view.register.show_register_text(True, "")
+    
     def search_sheet(self, value):
         #open dialog
         ...
     def get_columns(self):
         return self.model.get_columns()
-    def get_rows(self):
-        rows = self.model.get_rows()
+    def get_readings_columns(self):
+        return ['Posição', 'Nome', 'Placa', 'Trajeto', 'Categoria']
+    def get_readings_rows(self):
+        return self.model.get_readings_rows()
+    def get_registered_rows(self):
+        rows = self.model.get_registered_athletes()
         return rows
     def get_next_athlete(self):
         self.view.register.update_athlete(self.model.get_next_athlete())
@@ -62,11 +80,17 @@ class EventController:
         if files:
             self.model.set_event_sheet(files[0].path)
         self.initialize()
-    
+    def set_absent_athlete(self):
+        self.model.set_absent_athlete()
+        if self.auto_advance:
+            self.view.register.update_athlete(self.model.get_next_athlete())
+        
     def change_event_type(self, value):
         self.model.change_event_type(value)
     def change_start_type(self, value):
-        self.model.change_start_type(value)
+        
+        self.model.set_start_type(value)
+        self.view.info.change_start_type(value)
 
     def sheet_is_present(self):
         if self.model.sheet_is_present():
@@ -83,6 +107,7 @@ class EventController:
         self.view.register.toggle_sheet()
         df_loaded, error = self.model.load_df()
         if not df_loaded:
+            print("Failed to load df")
             #Show error returned by model
             pass
         else:
@@ -93,3 +118,43 @@ class EventController:
             
     def toggle_auto_advance(self, value):
         self.auto_advance = value
+        
+    def start_event(self):
+        self.model.start_event()
+        get_thread = threading.Thread(target=self.get_api_readings_thread)
+        endpoint_thread = threading.Thread(target=self.endpoint_thread)
+        
+        self.started = True
+        get_thread.start()
+        endpoint_thread.start()
+        
+        
+        self.view.start.toggle_button(self.started)
+        
+    def end_event(self):
+        self.started = False
+        self.view.start.toggle_button(self.started)
+        #outras rotinas ao finalizar.
+        
+    def get_api_readings_thread(self):
+        event_id = self.model.id
+        api_token = self.model.api_token
+        while self.started:
+            readings, error_ocurred = self.model.api.get_readings(event_id, api_token)
+            if error_ocurred:
+                self.view.start.show_message(readings, True) #Show error message
+            else:
+                self.model.add_athletes_readings(readings)
+                self.view.start.readings_sheet.update_rows()
+                self.view.start.dismiss_message()            
+            time.sleep(5)
+                
+    def endpoint_thread(self):
+        while self.started:
+            print("Endpoint thread.")
+            
+            
+            
+            time.sleep(5)
+        
+        

@@ -1,6 +1,7 @@
 import flet as ft
 
 from views.event_view.components.sheet_import_picker import SheetImportPicker
+from views.event_view.components.start_by_category import StartByCategory
 class InfoView(ft.Container):
     def __init__(self, page, controller, event):
         super().__init__()
@@ -35,11 +36,22 @@ class InfoView(ft.Container):
         bt_start_type = ft.Dropdown(options=start_options, value=self.controller.get_event_start(), on_change=lambda e: self.controller.change_start_type(e.control.value))
         
         #Components
-        type_select = ft.Container(ft.Column(controls=[event_type, bt_event_type], horizontal_alignment=ft.CrossAxisAlignment.CENTER),bgcolor=ft.colors.RED_200)
-        start_select = ft.Container(ft.Column(controls=[start_type, bt_start_type], horizontal_alignment=ft.CrossAxisAlignment.CENTER),bgcolor=ft.colors.RED_500)
-        #Controls
+        self.type_select = ft.Container(ft.Column(controls=[event_type, bt_event_type], horizontal_alignment=ft.CrossAxisAlignment.CENTER))
+        self.start_select = ft.Container(ft.Column(controls=[start_type, bt_start_type], horizontal_alignment=ft.CrossAxisAlignment.CENTER))
+        #Rows and Columns
         row1 = ft.Row(controls=[name, organizer], alignment=ft.MainAxisAlignment.CENTER)
         row2 = ft.Row(controls=[bt_import_sheet, sheet_error], alignment=ft.MainAxisAlignment.CENTER)
-        row3 = ft.Row(controls=[type_select, start_select], alignment=ft.MainAxisAlignment.SPACE_AROUND)
+    
         
-        self.content = ft.Column(controls=[row1, row2], scroll=ft.ScrollMode.ALWAYS, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+        event_configs = ft.Row([self.start_select], alignment=ft.MainAxisAlignment.CENTER)
+        
+        self.start_type_container = ft.Text()
+        self.start_type_container.visible = True
+        
+        self.content = ft.Column(controls=[row1, row2, event_configs, self.start_type_container], scroll=ft.ScrollMode.ALWAYS, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+        
+    def change_start_type(self, selected):
+        if selected == "Intervalo por Categoria":
+            self.start_type_container = StartByCategory(self.page, self.controller, self.event)
+            self.content.controls[-1] = self.start_type_container
+        self.update()

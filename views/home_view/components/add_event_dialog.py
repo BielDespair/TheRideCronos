@@ -27,7 +27,7 @@ class AddEventDialog(ft.AlertDialog):
         self.content = ft.Column([self.name, self.date, self.local, self.sheet, self.net_mode, self.progress, self.error_column], tight=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         
     def add_event(self):
-        self.controller.add_event(self.name.value, self.net_mode.value, self.local.value)
+        self.controller.add_event(self.name.value, self.date.value, self.net_mode.value, self.local.value)
         
     def pickDate(self, e):
         self.open = False

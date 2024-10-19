@@ -17,6 +17,7 @@ class Sheet(ft.UserControl):
             rows=self.rows,
             bgcolor=ft.colors.BLACK,
             )
+        
         return self.sheet
     def fetch_columns(self):
         columns = []
@@ -26,7 +27,7 @@ class Sheet(ft.UserControl):
 
     def fetch_rows(self):
         rows = []
-        for row in self.controller.get_rows():
+        for row in self.controller.get_registered_athletes():
             rows.append(ft.DataRow(cells=self.fetch_cells(row)))
         return rows
     def fetch_cells(self, row):

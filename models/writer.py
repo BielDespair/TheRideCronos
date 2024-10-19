@@ -1,3 +1,4 @@
+import os
 import time
 import serial
 import serial.tools
@@ -10,12 +11,74 @@ class Writer():
         self.com_port = None
         self.ser = None
         self.baudrate = 57600
+        self.epc_prefix = '72696465'
+        self.epc_start = 6
+        self.epc_length = 12
+    def register_tag(self, suffix):
+        error = self.connect_to_writer()
+        if error: return True, error
+        
+        padding = os.urandom(6).hex()
+        new_epc = self.epc_prefix + padding + suffix #2 words prefix + 3 words padding + 1 word suffix
+        new_epc = bytes.fromhex(new_epc)
+        error = self.write_epc(new_epc)
+        if error: return True, error
+        
+        current_tag_epc = self.get_current_epc()
+        if not current_tag_epc:
+            return True, "Falha no cadastro. Tente novamente"
+        if not current_tag_epc == new_epc:
+            return True, "Falha no cadastro. Tente Novamente"
+        
+        return False, new_epc
         
     def get_current_epc(self):
-        packet = self.create_packet(0x0f)
-        return self.send_cmd(packet)
+        cmd = 0x0f
+        packet = self.create_packet(cmd)
+        
+        response = self.send_cmd(packet)
+        if not response:
+            return
+        
+        if response[3] == 0x01:
+            return response[self.epc_start:self.epc_start+self.epc_length]
+        return
     
+    def write_epc(self, new_epc):
+        cmd = 0x04
+        
+        data_array = [
+            self.epc_length // 2,
+            *[0x00,0x00,0x00,0x00],
+            *new_epc
+        ]
+        packet = self.create_packet(cmd, data_array)
+        response = self.send_cmd(packet)
+        status = response[3]
+        if status == 0x00: return
+        if status == 0xfb: return f"Tag não encontrada. Tente Novamente"
+        
+        else: return f"Falha no cadastro! Tente Novamente. ERROR: Writer Status Code: {response[3]}"
     
+    def connect_to_writer(self):
+        try:
+            self.ser.write(b'\0x00')
+            time.sleep(0.5)
+            self.ser.read_all()
+        except:
+            self.ser = None
+        if not self.ser:
+            self.com_port = self.find_com_port()
+            if not self.com_port:
+                return "Aparelho não encontrado! Verifique a conexão USB e tente novamente"
+            if not self.ser:
+                try:
+                    ser = serial.Serial(self.com_port, self.baudrate, timeout=2)
+                    self.ser = ser
+                except Exception as e:
+                    return e
+        return 
+        
     def find_com_port(self):
         vid_pid = "10C4:EA60"
         serial_number = "0001"
@@ -26,14 +89,6 @@ class Writer():
                 com_port = port.device
         self.com_port = com_port
         return com_port
-    def connect_to_serial(self):
-
-        timeout = 2
-        try:
-            ser = serial.Serial(self.com_port, self.baudrate, timeout=timeout)
-            self.ser = ser
-        except serial.SerialException as e:
-            self.ser = None
         
     def _crc16(self, packet):
         PRESET_VALUE = 0xFFFF
@@ -58,24 +113,10 @@ class Writer():
         return packet
     
     def send_cmd(self, packet):
-        time_now = time.time()
+        
         self.ser.write(packet)
         time.sleep(0.5)
-        
-        c = 0
-        while c < 10:
-            c += 1
         if self.ser.in_waiting > 0:
             response = self.ser.read(self.ser.in_waiting)
             return response
         return None
-    
-    
-'''        
-import time
-writer = Writer()
-writer.find_com_port()
-writer.connect_to_serial()
-print(writer.get_current_epc())
-'''
-    

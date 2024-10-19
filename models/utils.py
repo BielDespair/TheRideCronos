@@ -1,6 +1,7 @@
 import os
 import shutil
 import re
+import time
 
 
 
@@ -38,11 +39,11 @@ def treat_plate_num(data):
 
 
 def clean_df(dataframe):
-    if 'registered' in dataframe.columns: #Já foi tratado
-        return
     dataframe['Numero Placa'] = dataframe['Numero Placa'].astype(str) #Transforms all Plate Num  into string
     dataframe['Numero Placa'] = dataframe['Numero Placa'].apply(treat_plate_num) #Adds a '-0' if it doenst have a hifen.
     dataframe['registered'] = False #TODO maybe the loaded sheet will already be treated and sorted...
+    dataframe['tag_epc'] = ""
+    dataframe.rename(columns={'Assessoria / Equipe': 'Patrocinador'}, inplace=True)
     return dataframe
     
 def sort_df(dataframe):
@@ -58,3 +59,18 @@ def sort_df(dataframe):
 
 def import_sheet(source, destination):
     shutil.copy(source, destination)
+    
+    
+def transform_suffix(suffix):
+    # Verifica se o formato é xxx-y
+    if '-' in suffix:
+        # Divide a string pelo '-'
+        parts = suffix.split('-')
+        return parts[0] + parts[1]
+    
+    # Se a string termina com um único dígito
+    elif len(suffix) == 3 and suffix[-1].isdigit():
+        return suffix + '0'
+    
+    # Retorna a string original se nenhuma condição for atendida
+    return suffix

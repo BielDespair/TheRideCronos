@@ -1,9 +1,13 @@
 # Byte-compiled / optimized / DLL files
 *.db
+*.xlsx
+data/events_data/*
 notes.TODO
+
 __pycache__/
 *.py[cod]
 *$py.class
+
 
 # C extensions
 *.so
