@@ -1,6 +1,5 @@
-
 import os
-from models.utils import get_events_paths
+from models.utils import get_events_paths, create_event_path, delete_event_path
 
 from models.database import Database
 from models.event_class import Event
@@ -17,7 +16,7 @@ class MainModel:
         self.events = None #TODO self.get_events() -> This should not be on view/controller. Both has eventOBJ. Change it.
     
     def get_events(self):
-        event_paths = get_events_paths(self.db.events_path)
+        event_paths = get_events_paths()
         events = []
         #This should all be in the model
         for path in event_paths:
@@ -42,10 +41,12 @@ class MainModel:
             return data, False
         id = data['id']
         api_token = data['api_token']
-        event = Event(id, api_token, name, date, icon_path, sheet_path, net_mode)        
-        self.db.new_event(event)
+        event = Event(id, api_token, name, date, icon_path, sheet_path, net_mode)
+        path = create_event_path(name)
+        event.set_path(path)
+        self.db.new_event(path, event)
         
         return event, True
     def delete_event(self, event):
-        os.remove(event.event_path)
+        delete_path(event.event_path)
         

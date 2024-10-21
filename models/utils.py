@@ -3,23 +3,28 @@ import shutil
 import re
 import time
 
+events_path = "data/events_data/"
 
 
-def get_valid_event_path(path, name):
-    final_path = path+name+".db"
-    if os.path.exists(path+name+".db"):
+def create_event_path(name):
+    path = events_path + name
+    if os.path.exists(path):
         count = 0
         for file in os.listdir(path):
-            if file.startswith(name):
+            if os.path.exists(path):
                 count += 1
-        final_path = path+name+str(count)+".db"
-    return final_path
+        path = path+"_"+str(count)
+    print("Final Path:", path)
+    os.mkdir(path)
+    return path
+def delete_event_path(path):
+    if os.path.exists(path):
+        shutil.rmtree(path)
 
-def get_events_paths(path):
+def get_events_paths():
     events = []
-    for file in os.listdir(path):
-        if file.endswith(".db"):
-            events.append(path+file)
+    for file in os.listdir(events_path):
+        events.append(events_path + file)
     return events
 
 def format_date_of_birth(date):

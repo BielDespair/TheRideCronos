@@ -1,17 +1,14 @@
 import sqlite3
-
 import pandas as pd
 
-from models.utils import get_valid_event_path
+from models.utils import create_event_path
 class Database:
     def __init__(self):
-        self.events_path = "data/events_data/"
+        self.db_path = "/sqlite3.db"
     
-    def new_event(self, event):
-        path = get_valid_event_path(self.events_path, event.name)  
-        event.set_path(path)
-        
-        conn = sqlite3.connect(path)
+    def new_event(self, event_path, event): #Creates a new event database.
+        conn = sqlite3.connect(event_path+self.db_path)
+
         cursor = conn.cursor()
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS athlete (
@@ -79,7 +76,6 @@ class Database:
             date TEXT,
             path TEXT,
             icon_path TEXT,
-            sheet_path TEXT
         )
         ''')
     
@@ -91,9 +87,9 @@ class Database:
         cursor.close()
         conn.close()
             
-    def query_event(self, path):
+    def query_event(self, event_path):
         # Conectar ao banco de dados
-        conn = sqlite3.connect(path)
+        conn = sqlite3.connect(event_path+self.db_path)
         conn.row_factory = sqlite3.Row  # Para acessar os resultados como dicionários
         cursor = conn.cursor()
         
@@ -114,24 +110,11 @@ class Database:
             conn.close()
         
         return results
-    def set_sheet_path(self, event_path, sheet_path):
-        try:
-            conn = sqlite3.connect(event_path)
-            cursor = conn.cursor()
-            cursor.execute('''
-                UPDATE event
-                SET sheet_path = ?
-            ''', (sheet_path,))  # Note the comma
-            
-            conn.commit()
-        except sqlite3.Error as e:
-            print(f"An error occurred: {e}")
-        finally:
-            conn.close()
+
     def query_readings(self, event_path):
         
         # Conectar ao banco de dados (ou criar um novo)
-        conn = sqlite3.connect(event_path)
+        conn = sqlite3.connect(event_path+self.db_path)
         cursor = conn.cursor()
 
         # Consulta para pegar as últimas 15 leituras com o nome do atleta
@@ -164,7 +147,7 @@ class Database:
         conn.close()
     def register_athlete(self, athlete, tag_epc, plate_num, event_path):
         
-        conn = sqlite3.connect(event_path)
+        conn = sqlite3.connect(event_path+self.db_path)
         cursor = conn.cursor()
         
         try:
@@ -216,7 +199,7 @@ class Database:
             conn.close()
             
     def get_registers_db(self, event_path):
-        conn = sqlite3.connect(event_path)
+        conn = sqlite3.connect(event_path+self.db_path)
         query = '''
         SELECT 
             a.id AS athlete_id,
@@ -246,5 +229,5 @@ class Database:
         '''
         df = pd.read_sql(query, conn)
         print(df)
-        
+
         
